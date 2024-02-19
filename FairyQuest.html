@@ -98,7 +98,7 @@ var LZString={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234
 		<div id="init-lacking"><p>Browser lacks capabilities required to play.</p><p>Upgrade or switch to another browser.</p></div>
 		<div id="init-loading"><div>Loading&hellip;</div></div>
 	</div>
-	<tw-storydata name="FairyQuest" startnode="1" creator="Twine" creator-version="2.7.1" format="SugarCube" format-version="2.36.1" ifid="BB3B4A8F-A555-4CD3-A7A4-57B2127E7E3F" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">@import url('https://fonts.googleapis.com/css2?family=Poppins&family=Space+Mono:wght@400;700&display=swap');
+	<tw-storydata name="FairyQuest" startnode="1" creator="Twine" creator-version="2.7.1" format="SugarCube" format-version="2.36.1" ifid="BB3B4A8F-A555-4CD3-A7A4-57B2127E7E3F" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">@import url('https://fonts.googleapis.com/css2?family=Poppins&family=Space+Mono:wght@400;700&family=Schoolbell&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
 
 :root {
@@ -111,6 +111,10 @@ var LZString={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234
   --olsen-theme: rgb(104, 191, 11);
   --olsen-font: 'Space Mono', monospace;
   --new-email-dimensions: 500px;
+  --flip-flop-dialog-color: #ffdcf1;
+  --dark-text-color: #211e21;
+  --flip-flop-purple: #a97de4;
+  --flip-flop-font: 'Schoolbell', sans-serif;
 }
 
 #ui-bar {
@@ -126,6 +130,63 @@ var LZString={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234
 .body-small {
   font-size: 12px;
   font-weight: lighter;
+}
+
+#ui-dialog {
+  filter: drop-shadow(0 0 0.75rem var(--os-accent-40pc));
+  border: 2px solid var(--flip-flop-purple);
+  border-radius: 8px;
+}
+
+#ui-dialog-body {
+  color: var(--dark-text-color);
+  background-color: var(--flip-flop-dialog-color);
+  border: none;
+  border-radius: 0px 0px 6px 6px;
+}
+
+#ui-dialog-titlebar {
+  background-color: var(--flip-flop-purple);
+  border-radius: 6px 6px 0px 0px;
+}
+
+#ui-dialog-title {
+  font-family: var(--flip-flop-font);
+}
+
+#ui-dialog-close {
+  border-radius: 0px 6px 0px 0px;
+}
+
+#ui-dialog::before {
+	content: '';
+	position: absolute;
+	width: 0;
+	height: 0;
+	bottom: calc(1.5em - 1px);
+	right: calc(100% - 0.375em);
+	border: calc(0.75rem + 2px) solid transparent;
+	border-top: none;
+	border-bottom-color: var(--flip-flop-purple);
+  	transform: rotate(-90deg);
+}
+
+#ui-dialog::after {
+	content: '';
+	position: absolute;
+	width: 0;
+	height: 0;
+	bottom: 1.5em;
+	right: calc(100% - 0.4rem);
+	border: .75rem solid transparent;
+	border-top: none;
+	border-bottom-color: var(--flip-flop-dialog-color);
+  	transform: rotate(-90deg);
+}
+
+#sprite {
+  position: absolute;
+  width: 100px;
 }
 
 body[data-tags~="OS"] {
@@ -169,6 +230,14 @@ body[data-tags~="Inbox"] .passage {
   color: var(--olsen-theme);
   font-family: var(--olsen-font);
   height: fit-content;
+  background-color: #fff !important;
+  border: 0.5px solid var(--flip-flop-purple);
+}
+
+#player-response-button {
+  background-color: var(--flip-flop-purple);
+  border-radius: 4px;
+  border: #fff;
 }
 
 #inbox-template {
@@ -376,15 +445,13 @@ body[data-tags~="Inbox"] .passage {
 }
 
 .inbox-email-bottom-toolbar {
-  position: fixed;
-  bottom: 8px;
-  left: 8px;
   display: flex;
   flex-direction: row;
   gap: 16px;
   align-items: center;
   justify-content: left;
   color: var(--gray);
+  padding: 8px;
 }
 
 .inbox-new-email-field {
@@ -403,10 +470,21 @@ body[data-tags~="Inbox"] .passage {
   color: white;
   border: 1px solid white;
   border-radius: 8px;
+}
+
+.inbox-new-email-body {
+  overflow: hidden;
+  overflow-y: scroll;
+  flex-grow: 1;
+}
+
+.inbox-new-email-body img {
+  width: 100%;
 }</style><script role="script" id="twine-user-script" type="text/twine-javascript">window.checkpoint = 1;
 
 window.finishScriptEvent = new Event("script-finished");
 
+window.sleep = ms => new Promise(r => setTimeout(r, ms));
 
 window.SCREEN1_SCRIPT = [
   	{
@@ -414,12 +492,18 @@ window.SCREEN1_SCRIPT = [
       "line": "Hiiiiiiiii :3c",
       "popup-class": "",
       "player-response":"",
+      "sprite-url": "https://raw.githubusercontent.com/caroldinh/fairy-quest/main/placeholders/flipflop-temp.png", 
+      "sprite-x": "50%",
+      "sprite-y": "10%",
     },
    	{
       "character": "Flip-Flop",
       "line": "Oh come on, you’re seriously doing work right now?",
       "popup-class": "",
       "player-response":"Look, I know you want to look for your family but I can’t just put everything on hold at the drop of a hat. Some of us have jobs. We can look later, okay?",
+      "sprite-url": "https://raw.githubusercontent.com/caroldinh/fairy-quest/main/placeholders/flipflop-temp.png", 
+      "sprite-x": "50%",
+      "sprite-y": "10%",
     },
   ];
 
@@ -430,6 +514,9 @@ window.SCREEN2_SCRIPT1 =
       "line": "I bet I can speed up all this dumb work stuff.",
       "popup-class": "",
       "player-response":"",
+      "sprite-url": "https://raw.githubusercontent.com/caroldinh/fairy-quest/main/placeholders/flipflop-temp.png", 
+      "sprite-x": "30%",
+      "sprite-y": "7%",
     },
 ];
 
@@ -440,12 +527,18 @@ window.SCREEN2_SCRIPT2 =
       "line": "There we go! That should keep em busy for a few hours.",
       "popup-class": "",
       "player-response":"Oh my god. You’re not gonna leave me alone unless I do what you want, are you?",
+       "sprite-url": "https://raw.githubusercontent.com/caroldinh/fairy-quest/main/placeholders/flipflop-temp.png", 
+      "sprite-x": "50%",
+      "sprite-y": "10%",
     },
     {
       "character": "Flip-Flop",
       "line": "Nope!",
       "popup-class": "",
       "player-response":"Ughhh, fine.",
+      "sprite-url": "https://raw.githubusercontent.com/caroldinh/fairy-quest/main/placeholders/flipflop-temp.png", 
+      "sprite-x": "50%",
+      "sprite-y": "10%",
     },
   ];
 
@@ -479,6 +572,10 @@ window.displayLine = function(script, i) {
       $(document).on(':dialogclosed', function (ev) {
       		window.displayLine(script, i+1);
     	});
+    }
+    if (line['sprite-url']) {
+      let sprite = `<img id='sprite' src=${line['sprite-url']} style='left:${line['sprite-x']};top:${line['sprite-y']};'></img>`;
+      $("body").append(sprite);
     }
   } else {
     document.dispatchEvent(window.finishScriptEvent);
@@ -846,7 +943,10 @@ h1 {
       		$(document).on(&quot;script-finished&quot;, () =&gt; {
                 if (window.checkpoint == 3) { // Just clicked the inbox notif
                     $(&quot;#important&quot;).css(&quot;display&quot;, &quot;none&quot;);
-                    window.composeEmail(&quot;Everyone&quot;, &quot;Everyone else&quot;, &quot;IMPORTANT&quot;, &quot;HI&quot;);
+                    window.composeEmail(&quot;EVERYONE AT WORK&quot;, &quot;AND THEIR BOSSES&quot;, &quot;IMPORTANT: Critical Software Update&quot;, 
+                    &quot;&lt;img src=&#39;https://raw.githubusercontent.com/caroldinh/fairy-quest/main/placeholders/computer-viruses.png&#39;&gt;&lt;/img&gt;&quot;);
+                  window.displayLine(window.SCREEN2_SCRIPT2, 0);
+                  window.checkpoint = 4;
                 }
              });
       &lt;&lt;/script&gt;&gt;
